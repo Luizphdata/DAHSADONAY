@@ -11,7 +11,7 @@ import {
 import type { DashboardTimeseriesComparisonPoint } from '../../types/dashboard'
 import { formatDate, formatNumber } from '../../utils/formatters'
 
-function ChartTooltip({ active, payload }: TooltipProps<number, string>) {
+function ChartTooltip({ active, payload, comparisonAvailable }: TooltipProps<number, string> & { comparisonAvailable: boolean }) {
   if (!active || !payload?.length) return null
 
   const point = payload[0]?.payload as DashboardTimeseriesComparisonPoint | undefined
@@ -27,7 +27,7 @@ function ChartTooltip({ active, payload }: TooltipProps<number, string>) {
         </p>
         {point.is_partial_day && <span className="mt-2 inline-flex rounded-full bg-[#fff5e8] px-2 py-1 text-[11px] font-semibold text-[#a86b43]">Día en curso</span>}
       </div>
-      <div className="pt-3">
+      <div className="pt-3" hidden={!comparisonAvailable}>
         <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#82939d]">Período anterior</p>
         <p className="mt-1 text-sm font-semibold text-[#526a79]">{formatDate(point.previous_day)}</p>
         <p className="mt-1 font-['Manrope'] text-lg font-extrabold tracking-[-0.04em] text-[#526a79]">
@@ -40,15 +40,16 @@ function ChartTooltip({ active, payload }: TooltipProps<number, string>) {
 
 type ContactsEvolutionChartProps = {
   data: DashboardTimeseriesComparisonPoint[]
+  comparisonAvailable?: boolean
 }
 
-function ContactsEvolutionChart({ data }: ContactsEvolutionChartProps) {
+function ContactsEvolutionChart({ data, comparisonAvailable = true }: ContactsEvolutionChartProps) {
   return (
     <section className="mt-6 rounded-2xl border border-[#e4ebef] bg-white p-6 shadow-[0_14px_38px_-28px_rgba(16,38,63,0.38)] sm:p-7">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
         <div>
           <h2 className="font-['Manrope'] text-xl font-extrabold tracking-[-0.045em] text-ink">Evolución de contactos</h2>
-          <p className="mt-1 text-sm leading-6 text-[#8a99a2]">Comparación con el período anterior.</p>
+          <p className="mt-1 text-sm leading-6 text-[#8a99a2]">{comparisonAvailable ? 'Comparación con el período anterior.' : 'Sin comparación: cobertura histórica insuficiente.'}</p>
         </div>
         <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-[#718492]">
           <span className="inline-flex items-center gap-2">
@@ -86,7 +87,7 @@ function ContactsEvolutionChart({ data }: ContactsEvolutionChartProps) {
                 axisLine={false}
                 width={38}
               />
-              <Tooltip content={<ChartTooltip />} cursor={{ stroke: '#cbdde2', strokeDasharray: '4 4' }} />
+              <Tooltip content={<ChartTooltip comparisonAvailable={comparisonAvailable} />} cursor={{ stroke: '#cbdde2', strokeDasharray: '4 4' }} />
               <Line
                 type="monotone"
                 dataKey="current_contacts"
@@ -97,6 +98,7 @@ function ContactsEvolutionChart({ data }: ContactsEvolutionChartProps) {
               />
               <Line
                 type="monotone"
+                hide={!comparisonAvailable}
                 dataKey="previous_contacts"
                 stroke="#10263f"
                 strokeWidth={2}

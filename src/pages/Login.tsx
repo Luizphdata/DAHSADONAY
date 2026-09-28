@@ -49,20 +49,13 @@ function Login() {
 
   return (
     <main className="relative flex min-h-screen overflow-hidden bg-[#f6f8fb] text-ink">
-      <div className="pointer-events-none absolute -left-32 -top-36 h-96 w-96 rounded-full bg-[#dceff2]/70 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-48 -right-24 h-[30rem] w-[30rem] rounded-full bg-[#e8edf5] blur-3xl" />
+      <div className="pointer-events-none absolute -left-32 -top-36 h-96 w-96 rounded-full bg-[#e9e1fa]/70 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-48 -right-24 h-[30rem] w-[30rem] rounded-full bg-[#ddeff9] blur-3xl" />
 
       <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-col lg:flex-row">
         <section className="flex flex-1 flex-col justify-between px-6 pb-10 pt-8 sm:px-10 lg:min-h-screen lg:px-16 lg:pb-14 lg:pt-12 xl:px-24">
           <div>
-            <div className="flex items-center gap-3">
-              <div className="grid h-10 w-10 place-items-center rounded-[13px] bg-ink text-sm font-bold tracking-[0.12em] text-white shadow-lg shadow-ink/10">
-                AD
-              </div>
-              <span className="font-['Manrope'] text-lg font-extrabold tracking-[-0.04em]">
-                Adonay
-              </span>
-            </div>
+            <img src="/brand/adonay-logo.jpeg" alt="Clínica Dental Adonay" className="w-56 rounded-xl" />
           </div>
 
           <div className="max-w-[540px] py-14 lg:py-0">

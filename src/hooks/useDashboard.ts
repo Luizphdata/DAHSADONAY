@@ -58,6 +58,8 @@ export function useDashboard(filters: DashboardRequest | null) {
 
     if (typeof navigator !== 'undefined' && !navigator.onLine) {
       setIsOffline(true)
+      setLoading(false)
+      setRefreshing(false)
       if (hasData.current) setBackgroundError(true)
       else setError(true)
       return
@@ -140,6 +142,10 @@ export function useDashboard(filters: DashboardRequest | null) {
     loadedFilterKey.current = null
     lastSuccessfulUpdateAt.current = null
     clearNewContacts()
+    setData(null)
+    hasData.current = false
+    setLoading(Boolean(filters))
+    setError(false)
     setBackgroundError(false)
 
     if (!filters) {
@@ -205,5 +211,6 @@ export function useDashboard(filters: DashboardRequest | null) {
     if (badgeTimeout.current) clearTimeout(badgeTimeout.current)
   }, [])
 
-  return { data, loading, error, backgroundError, reload, refreshing, newContacts, isOffline }
+  const visibleData = loadedFilterKey.current === filterKey ? data : null
+  return { data: visibleData, loading, error, backgroundError, reload, refreshing, newContacts, isOffline }
 }

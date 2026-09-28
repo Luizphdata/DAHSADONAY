@@ -188,6 +188,7 @@ export type DashboardSnapshot = {
   schema_version: string
   period: DashboardPeriod
   kpis: {
+    period?: { previous_available?: boolean }
     current: DashboardKpiValues
     previous: DashboardKpiValues
     change: DashboardKpiChange
@@ -196,6 +197,7 @@ export type DashboardSnapshot = {
   timeseries: DashboardTimeseries
   breakdowns: DashboardBreakdowns
   campaigns: DashboardCampaigns
+  comparisons?: { comparisons?: { previous_period?: { available?: boolean | null } } }
 }
 
 export type DashboardFunctionResponse = {

@@ -1,3 +1,6 @@
+import { hasPreviousCoverage } from '../utils/channelInsights'
+import Overview from '../components/dashboard/Overview'
+import { LayoutDashboard, ChartNoAxesCombined, GitBranch, ListFilter } from 'lucide-react'
 import { lazy, Suspense, useMemo, useState, type ChangeEvent } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import {
@@ -56,7 +59,8 @@ function isAttributionModel(value: string | null): value is AttributionModel {
 }
 
 function isValidDateValue(value: string) {
-  return /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(new Date(`${value}T12:00:00`).getTime())
+  const date = new Date(`${value}T12:00:00Z`)
+  return /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value
 }
 
 function formatNewContacts(value: number) {
@@ -167,7 +171,7 @@ function ChartLoadingCard({ height = 'h-[300px]' }: { height?: string }) {
 
 function DashboardContent({ snapshot }: { snapshot: DashboardSnapshot }) {
   const current = snapshot.kpis.current
-  const changes = snapshot.kpis.change
+  const changes = hasPreviousCoverage(snapshot) ? snapshot.kpis.change : { valid_clicks_pct: null, google_ads_pct: null, meta_ads_pct: null, organic_pct: null }
   const confirmedRate = Math.max(0, Math.min(100, current.confirmed_attribution_rate))
   const isPartialPeriod = snapshot.period.is_partial_period === true
 
@@ -284,7 +288,7 @@ function DashboardContent({ snapshot }: { snapshot: DashboardSnapshot }) {
       </section>
 
       <Suspense fallback={<ChartLoadingCard height="h-[300px] sm:h-[360px]" />}>
-        <ContactsEvolutionChart data={snapshot.timeseries.comparison} />
+        <ContactsEvolutionChart data={snapshot.timeseries.comparison} comparisonAvailable={hasPreviousCoverage(snapshot)} />
       </Suspense>
       <Suspense fallback={<ChartLoadingCard height="h-[300px] sm:h-[350px]" />}>
         <ChannelDistributionChart data={snapshot.breakdowns.channels} totalValidContacts={current.valid_clicks} />
@@ -333,13 +337,14 @@ function DashboardContent({ snapshot }: { snapshot: DashboardSnapshot }) {
 
 function Dashboard() {
   const [searchParams, setSearchParams] = useSearchParams()
+  const [view, setView] = useState<'overview' | 'detail'>('overview')
   const initialPresetValue = searchParams.get('preset')
   const initialAttributionValue = searchParams.get('attribution')
   const initialPreset = isDashboardPreset(initialPresetValue) ? initialPresetValue : 'mes_actual'
   const initialAttribution = isAttributionModel(initialAttributionValue) ? initialAttributionValue : 'last'
   const initialStart = searchParams.get('start') ?? ''
   const initialEnd = searchParams.get('end') ?? ''
-  const initialCustomDatesAreValid = initialPreset === 'personalizado' && isValidDateValue(initialStart) && isValidDateValue(initialEnd)
+  const initialCustomDatesAreValid = initialPreset === 'personalizado' && isValidDateValue(initialStart) && isValidDateValue(initialEnd) && initialStart <= initialEnd
 
   const [preset, setPreset] = useState<DashboardPreset>(initialPreset)
   const [attribution, setAttribution] = useState<AttributionModel>(initialAttribution)
@@ -452,62 +457,20 @@ function Dashboard() {
   }
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#f6f8fb] px-5 py-6 text-ink sm:px-8 lg:px-12 lg:py-9">
-      <div className="pointer-events-none absolute -left-32 -top-36 h-96 w-96 rounded-full bg-[#dceff2]/70 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-48 -right-24 h-[30rem] w-[30rem] rounded-full bg-[#e8edf5] blur-3xl" />
-
-      <div className="relative z-10 mx-auto max-w-[1440px]">
-        <header className="flex flex-col gap-5 border-b border-[#e2eaee] pb-6 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="grid h-10 w-10 place-items-center rounded-[13px] bg-ink text-sm font-bold tracking-[0.12em] text-white shadow-lg shadow-ink/10">
-              AD
-            </div>
-            <div>
-              <p className="font-['Manrope'] text-lg font-extrabold tracking-[-0.04em] text-ink">Adonay</p>
-              <p className="text-xs text-[#80919e]">Dashboard de Atribución</p>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-3 md:items-end">
-            <div className="flex flex-wrap items-center justify-end gap-2 text-xs text-[#7f909b]" aria-live="polite">
-              <span className="inline-flex items-center gap-2">
-                <Clock3 className="h-4 w-4 text-cyan" strokeWidth={1.8} />
-                Última actualización: {formatDateTime(data?.period.generated_at)}
-              </span>
-              {refreshing && <span className="font-semibold text-cyan">· Actualizando...</span>}
-              <button
-                type="button"
-                onClick={() => void reload()}
-                disabled={refreshing || loading || isOffline}
-                aria-label="Actualizar datos"
-                title="Actualizar datos"
-                className="grid h-8 w-8 place-items-center rounded-lg text-[#718592] transition hover:bg-white hover:text-ink disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} strokeWidth={1.9} />
-              </button>
-              {newContacts > 0 && (
-                <span className="rounded-full border border-[#cfe8dd] bg-[#f2faf6] px-2.5 py-1 font-semibold text-[#398067]">
-                  {formatNewContacts(newContacts)}
-                </span>
-              )}
-              {isOffline && (
-                <span className="rounded-full border border-[#ead8d5] bg-[#fff8f7] px-2.5 py-1 font-semibold text-[#a54842]">
-                  Sin conexión
-                </span>
-              )}
-            </div>
-            <button
-              type="button"
-              onClick={handleSignOut}
-              disabled={isSigningOut}
-              className="inline-flex items-center gap-2 self-start text-sm font-semibold text-[#647987] transition hover:text-ink disabled:cursor-not-allowed disabled:opacity-60 md:self-end"
-            >
-              {isSigningOut ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <LogOut className="h-4 w-4" strokeWidth={1.8} />}
-              Cerrar sesión
-            </button>
-          </div>
-        </header>
-
+    <main className="dashboard-shell">
+      <aside className="dashboard-sidebar">
+        <div className="dashboard-brand"><img src="/brand/adonay-logo.jpeg" alt="Clínica Dental Adonay" /><span>Panel de resultados</span></div>
+        <nav aria-label="Navegación principal">
+          <button onClick={() => setView('overview')} className={view === 'overview' ? 'active' : ''} aria-current={view === 'overview' ? 'page' : undefined}><LayoutDashboard size={18} />Visión general</button>
+          <a href="#origins" onClick={() => setView('overview')}><GitBranch size={18} />Orígenes</a>
+          <a href="#evolution" onClick={() => setView('overview')}><ChartNoAxesCombined size={18} />Evolución</a>
+          <button onClick={() => setView('detail')} className={view === 'detail' ? 'active' : ''} aria-current={view === 'detail' ? 'page' : undefined}><ListFilter size={18} />Análisis detallado</button>
+        </nav>
+        <div className="dashboard-account"><span>Equipo Adonay</span><button onClick={handleSignOut} disabled={isSigningOut}>{isSigningOut ? <LoaderCircle size={16} className="animate-spin" /> : <LogOut size={16} />}Cerrar sesión</button></div>
+      </aside>
+      <div className="dashboard-workspace">
+        <header className="dashboard-topbar"><span>Adonay / {view === 'overview' ? 'Visión general' : 'Análisis detallado'}</span><div className="dashboard-update" aria-live="polite"><Clock3 size={14} /><span>{refreshing ? 'Actualizando…' : 'Actualizado: ' + formatDateTime(data?.period.generated_at)}</span><button aria-label="Actualizar datos" onClick={() => void reload()} disabled={refreshing || loading || isOffline || !filters}><RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} /></button>{isOffline && <span>Sin conexión</span>}{newContacts > 0 && <span>{formatNewContacts(newContacts)}</span>}</div></header>
+        <div className="dashboard-title"><h1>{view === 'overview' ? 'Visión general' : 'Análisis detallado'}</h1><p>{view === 'overview' ? 'Tus contactos y de dónde vienen.' : 'Campañas, páginas y calidad de atribución.'}</p></div>
         <section className="border-b border-[#e2eaee] py-5">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
@@ -517,6 +480,7 @@ function Dashboard() {
                   <span className="relative flex items-center rounded-xl border border-[#dbe5ea] bg-white shadow-[0_5px_18px_-16px_rgba(16,38,63,0.45)]">
                     <CalendarDays className="pointer-events-none absolute left-3.5 h-4 w-4 text-cyan" strokeWidth={1.8} />
                     <select
+                      aria-label="Período"
                       value={preset}
                       onChange={handlePresetChange}
                       className="h-11 w-full appearance-none rounded-xl bg-transparent pl-10 pr-4 text-sm font-semibold text-ink outline-none focus:ring-4 focus:ring-cyan/10"
@@ -532,6 +496,7 @@ function Dashboard() {
                   <span className="relative flex items-center rounded-xl border border-[#dbe5ea] bg-white shadow-[0_5px_18px_-16px_rgba(16,38,63,0.45)]">
                     <SlidersHorizontal className="pointer-events-none absolute left-3.5 h-4 w-4 text-cyan" strokeWidth={1.8} />
                     <select
+                      aria-label="Modelo de atribución"
                       value={attribution}
                       onChange={handleAttributionChange}
                       className="h-11 w-full appearance-none rounded-xl bg-transparent pl-10 pr-4 text-sm font-semibold text-ink outline-none focus:ring-4 focus:ring-cyan/10"
@@ -580,15 +545,7 @@ function Dashboard() {
           </div>
         </section>
 
-        <section className="py-8 sm:py-10">
-          <div className="mb-7">
-            <p className="text-sm font-semibold text-cyan">Resumen de rendimiento</p>
-            <h1 className="mt-1 font-['Manrope'] text-3xl font-extrabold tracking-[-0.06em] text-ink sm:text-4xl">
-              Contactos atribuidos por canal
-            </h1>
-            <p className="mt-2 text-sm leading-6 text-[#81919b]">durante el período seleccionado.</p>
-          </div>
-
+        <section className="dashboard-results" aria-busy={loading || refreshing}>
           {logoutError && (
             <p className="mb-6 rounded-xl border border-[#f0d5d2] bg-[#fff8f7] px-4 py-3 text-sm leading-5 text-[#a54842]" role="alert">
               {logoutError}
@@ -643,7 +600,7 @@ function Dashboard() {
                   <span>Se detectó una inconsistencia en los datos.</span>
                 </div>
               )}
-              <DashboardContent snapshot={data} />
+              {view === 'overview' ? <Overview snapshot={data} attribution={attribution} /> : <DashboardContent snapshot={data} />}
             </>
           )}
         </section>

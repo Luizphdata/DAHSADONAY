@@ -1,0 +1,58 @@
+import fs from 'node:fs/promises'
+import assert from 'node:assert/strict'
+import { pathToFileURL } from 'node:url'
+const { PGlite } = await import(process.env.PGLITE_MODULE ? pathToFileURL(process.env.PGLITE_MODULE).href : '@electric-sql/pglite')
+const db = new PGlite()
+const dir = new URL('../supabase/consistency-v1/', import.meta.url)
+const baseline = await fs.readFile(new URL('baseline-functions.sql',dir),'utf8')
+const apply = await fs.readFile(new URL('01-apply.sql',dir),'utf8')
+const rollback = await fs.readFile(new URL('02-rollback.sql',dir),'utf8')
+try {
+ await db.exec('CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role;')
+ const cols = [...new Set([...baseline.matchAll(/\bd\.([a-z_]+)/g)].map(match=>match[1]))]
+ const bools = ['is_valid_click','is_test_record','is_technical_duplicate']
+ await db.exec(`CREATE TABLE public.vw_whatsapp_leads_final (${cols.map(name=>`${name} ${name==='clicked_at'?'timestamptz':name==='id'?'bigint':bools.includes(name)?'boolean':'text'}`).join(',')}); CREATE VIEW public.vw_whatsapp_leads_keywords_safe AS SELECT * FROM public.vw_whatsapp_leads_final;`)
+ await db.exec(baseline)
+ await db.exec('REVOKE EXECUTE ON ALL FUNCTIONS IN SCHEMA public FROM PUBLIC, anon, authenticated; GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO service_role;')
+ await db.exec(`INSERT INTO public.vw_whatsapp_leads_final(id,clicked_at,is_valid_click,is_test_record,is_technical_duplicate,first_channel_final,last_channel_final,first_campaign_effective,last_campaign_effective) SELECT n,NOW()-INTERVAL '1 minute',true,false,false,'Canal '||n,'Canal '||n,'Campaña '||n,'Campaña '||n FROM generate_series(1,18) n;
+ INSERT INTO public.vw_whatsapp_leads_final(id,clicked_at,is_valid_click,is_test_record,first_channel_final,last_channel_final) VALUES (100,NOW()-INTERVAL '40 days',true,false,'Google Ads','Google Ads'),(101,NOW()-INTERVAL '1 day',true,false,'Google Ads','Google Ads'),(102,(((NOW() AT TIME ZONE 'America/Santiago')::date+1)::timestamp AT TIME ZONE 'America/Santiago')-INTERVAL '1 microsecond',true,false,'Futuro','Futuro');`)
+ const run = async preset => (await db.query("SELECT public.dashboard_snapshot($1,'last',NULL,NULL,1) AS value",[preset])).rows[0].value
+ const old = await run('hoy')
+ const closedBefore = await run('ayer')
+ assert.equal(old.breakdowns.channels.length,1)
+ assert.equal(old.integrity.core_totals_match,false)
+ await db.exec(apply)
+ const today = await run('hoy')
+ assert.equal((await run('ayer')).kpis.current.valid_clicks,closedBefore.kpis.current.valid_clicks)
+ await db.exec(await fs.readFile(new URL('03-validate.sql',dir),'utf8'))
+ assert.equal(today.kpis.current.valid_clicks,18)
+ assert.equal(today.breakdowns.channels.length,18)
+ assert.equal(today.campaigns.campaigns.length,1)
+ assert.equal(today.integrity.core_totals_match,true)
+ assert.equal(today.kpis.period.previous_available,true)
+ assert.ok(!today.breakdowns.channels.some(row=>row.channel==='Futuro'))
+ const cold = await run('30d')
+ assert.equal(cold.kpis.period.previous_available,false)
+ assert.ok(Object.values(cold.kpis.change).every(value=>value===null))
+ assert.equal(cold.timeseries.totals.change_pct,null)
+ assert.ok(cold.timeseries.comparison.every(row=>row.change_pct===null))
+ await db.exec(`CREATE OR REPLACE FUNCTION public.dashboard_breakdowns(p_start_date date,p_end_date date,p_attribution_model text DEFAULT 'last',p_limit integer DEFAULT 20) RETURNS jsonb LANGUAGE sql AS $$ SELECT '{}'::jsonb $$;`)
+ await assert.rejects(()=>run('hoy'),/Incomplete dashboard snapshot/)
+ await db.exec(apply)
+ await db.exec(`CREATE OR REPLACE FUNCTION public.dashboard_breakdowns(p_start_date date,p_end_date date,p_attribution_model text DEFAULT 'last',p_limit integer DEFAULT 20) RETURNS jsonb LANGUAGE sql AS $$ SELECT jsonb_build_object('channels','[]'::jsonb,'meta','{}'::jsonb) $$;`)
+ await assert.rejects(()=>run('hoy'),/Missing or invalid dashboard count/)
+ await db.exec(apply)
+ await db.exec(rollback)
+ const restored = await run('hoy')
+ assert.equal(restored.breakdowns.channels.length,1)
+ assert.equal(restored.schema_version,'1.0')
+ const acl = (await db.query("SELECT has_function_privilege('anon','public.dashboard_snapshot(text,text,date,date,integer)','EXECUTE') AS anon, has_function_privilege('authenticated','public.dashboard_snapshot(text,text,date,date,integer)','EXECUTE') AS authenticated, has_function_privilege('service_role','public.dashboard_snapshot(text,text,date,date,integer)','EXECUTE') AS backend")).rows[0]
+ assert.deepEqual(acl,{anon:false,authenticated:false,backend:true})
+ await db.exec(apply)
+ await db.exec('TRUNCATE public.vw_whatsapp_leads_final')
+ const empty = await run('hoy')
+ assert.equal(empty.kpis.current.valid_clicks,0)
+ assert.equal(empty.integrity.core_totals_match,true)
+ assert.equal(empty.kpis.period.previous_available,false)
+ console.log('PASS SQL: regressions, complete channels, cutoff, coverage, missing blocks/counts, permissions and rollback verified in isolated PostgreSQL. Attribution views use fixture tables.')
+} finally { await db.close() }

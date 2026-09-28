@@ -5,7 +5,7 @@ export default {
     extend: {
       colors: {
         ink: '#10263f',
-        cyan: '#0b9eb5',
+        cyan: '#199dd5',
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
