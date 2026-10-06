@@ -48,7 +48,7 @@ Fases decimais aparecem entre as inteiras vizinhas, em ordem numérica.
   6. `@electric-sql/pglite@0.3.14` é dependência exclusiva de teste e não aparece em `dependencies`.
 **Plans**: 4 plans
 Plans:
-- [ ] 01-01-PLAN.md — Scripts `test`/`lint`, todas as devDependencies e `eslint.config.js` de dois blocos (QUAL-01, QUAL-02, QUAL-03)
+- [x] 01-01-PLAN.md — Scripts `test`/`lint`, todas as devDependencies e `eslint.config.js` de dois blocos (QUAL-01, QUAL-02, QUAL-03)
 - [ ] 01-02-PLAN.md — Testes automatizados de `useDashboard.ts` e `AuthContext.tsx` (QUAL-06)
 - [ ] 01-03-PLAN.md — Pipeline de CI no GitHub Actions (QUAL-04)
 - [ ] 01-04-PLAN.md — `README.md` e `CLAUDE.md` (QUAL-05)
@@ -167,7 +167,7 @@ As fases executam em ordem numérica: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Infra de qualidade do repositório | 0/4 | Not started | - |
+| 1. Infra de qualidade do repositório | 1/4 | In Progress|  |
 | 2. Aplicar o pacote consistency-v1 | 0/TBD | Not started | - |
 | 3. Descoberta — o que conta como contato | 0/TBD | Not started | - |
 | 4. Atribuição consistente por touch | 0/TBD | Not started | - |

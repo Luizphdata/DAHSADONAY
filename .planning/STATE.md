@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-10-06T14:52:28.247Z"
+last_updated: "2026-10-06T15:08:58.357Z"
 progress:
-  total_phases: 8
+  total_phases: 9
   completed_phases: 0
   total_plans: 4
-  completed_plans: 0
-  percent: 0
+  completed_plans: 1
+  percent: 25
 ---
 
 # Estado do projeto
@@ -24,29 +24,29 @@ Ver: `.planning/PROJECT.md` (atualizado em 2026-10-06)
 ## Posição atual
 
 Fase: 1 de 8 (Infra de qualidade do repositório)
-Plano: 0 de 4 na fase atual
-Status: Ready to execute
-Última atividade: 2026-10-06 — ingestão de documentos, mapeamento do código e criação do roadmap
+Plano: 1 de 4 na fase atual
+Status: Executing Phase 01
+Última atividade: 2026-10-06 — plano 01-01 concluído (scripts `test`/`lint`, devDependencies, `eslint.config.js`)
 
-Progresso: [░░░░░░░░░░] 0%
+Progresso: [██▓░░░░░░░] 25% (1/4 planos da Fase 1)
 
 ## Métricas de desempenho
 
 **Velocidade:**
 
-- Planos concluídos: 0
-- Duração média: —
-- Tempo total de execução: —
+- Planos concluídos: 1
+- Duração média: 15min
+- Tempo total de execução: 15min
 
 **Por fase:**
 
 | Fase | Planos | Total | Média/plano |
 |------|--------|-------|-------------|
-| - | - | - | - |
+| 1 | 1 | 15min | 15min |
 
 **Tendência recente:**
 
-- Últimos 5 planos: —
+- Últimos 5 planos: 01-01 (15min)
 - Tendência: —
 
 *Atualizado após cada plano concluído*
@@ -60,6 +60,8 @@ O log completo está na tabela "Decisões-chave" de `.planning/PROJECT.md`. As s
 - **Variante C** (2026-10-06, escolha do usuário): definir e documentar o conjunto de eventos que representam contato — incluindo os outros botões do painel, não apenas WhatsApp — e validar contra dados reais **antes** de fixar a regra de contagem. É descoberta, não implementação: Fase 3.
 - **O rótulo visível do indicador fica em aberto** até a Fase 7, depois de a regra de contagem estar fixada na Fase 5. Nenhuma fase nomeia a métrica antes disso.
 - **Ordem das frentes preservada:** F1 infra → F2 consistency-v1 → F3 achados abertos → F4 interface → F5 publicação. A F3 foi subdividida em quatro fases (3 a 6) porque `CON-ordem-correcao` impõe sub-passos ordenados.
+- **[Fase 01-01]** `eslint-plugin-react-hooks@7.1.1`'s bundled `recommended`/`recommended-latest` presets ship newer React-Compiler-oriented rules (set-state-in-effect, refs, purity etc.) that flag existing working code with no real bug; `eslint.config.js`'s `src/` block registers only `rules-of-hooks`/`exhaustive-deps` explicitly instead of spreading a preset, to avoid forcing application-logic rewrites out of this plan's scope.
+- **[Fase 01-01]** `react-refresh/only-export-components` got an `allowExportNames: ['useAuth']` override so the documented hook+provider co-location in `AuthContext.tsx` (CONVENTIONS.md § Module Design) doesn't fail lint.
 
 ### Pendências e todos
 
@@ -91,6 +93,6 @@ Nenhum todo capturado em `.planning/todos/pending/` ainda.
 ## Continuidade de sessão
 
 Última sessão: 2026-10-06
-Parou em: Criação de `PROJECT.md`, `REQUIREMENTS.md`, `ROADMAP.md` e `STATE.md` a partir de `.planning/intel/` e `.planning/codebase/`
+Parou em: Execução do plano 01-01-PLAN.md (scripts `test`/`lint`, devDependencies, `eslint.config.js`) — QUAL-01, QUAL-02, QUAL-03 concluídos
 Arquivo de retomada: Nenhum
-Próxima ação: `/gsd-plan-phase 1`
+Próxima ação: Executar `01-02-PLAN.md` (testes automatizados de `useDashboard.ts` e `AuthContext.tsx`, QUAL-06)
