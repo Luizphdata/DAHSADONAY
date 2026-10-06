@@ -371,7 +371,17 @@ jobs:
 
 **If this table is empty:** N/A — see rows above; all other factual claims in this document were either verified by direct command execution in this session or cited to a fetched official-docs page.
 
-## Open Questions
+## Open Questions (RESOLVED 2026-10-06)
+
+> As três questões abaixo foram resolvidas antes do planejamento. As resoluções
+> estão registradas em `01-VALIDATION.md` § "Decisões registradas nas três questões
+> abertas da pesquisa" e, no caso da primeira, também como correção datada no
+> critério 1 da Fase 1 em `.planning/ROADMAP.md`. Os quatro planos da fase foram
+> escritos contra essas resoluções. Marcadores inline abaixo.
+>
+> - **Q1 → RESOLVIDA:** `build-consistency-package.py` fica **fora** do `npm test` e da CI, documentado como ferramenta manual (a recomendação padrão da pesquisa, Assumption A2). Decidido com base em QUAL-01, que nomeia apenas dois comandos.
+> - **Q2 → RESOLVIDA:** `@electric-sql/pglite` permanece pinada em **`0.3.14`**. Sem bump para 0.5.8 nesta fase.
+> - **Q3 → RESOLVIDA:** arquivos de teste **não** entram em `tsconfig` para `tsc -b`, mantendo consistência com as suítes `.mjs` existentes. Sem adicionar `@types/node`.
 
 1. **Is `build-consistency-package.py` actually meant to be part of `npm test`, or is the roadmap's "quatro suítes" phrasing simply imprecise?**
    - What we know: `REQUIREMENTS.md`'s QUAL-01 text only names two things — `node --test tests/*.test.mjs` and `node tests/consistency-sql.mjs`. The roadmap's Phase 1 success criterion #1 says "quatro suítes." The script itself (read in full during this research) requires a CLI argument pointing at a CSV that isn't in the repo, and has no assertions of its own beyond internal `replace_once` sanity checks that only run if given real input.
