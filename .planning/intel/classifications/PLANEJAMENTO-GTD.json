@@ -1,0 +1,32 @@
+{
+  "source_path": "C:\\Users\\luizp\\OneDrive\\Documentos\\DashClaude\\PLANEJAMENTO-GTD.md",
+  "type": "PRD",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "Modernização do dashboard Adonay",
+  "summary": "Plano de produto para modernizar o dashboard da Clínica Dental Adonay, definindo resultado desejado, escopo da primeira versão, indicadores e pendências de validação.",
+  "scope": [
+    "dashboard Adonay",
+    "Clínica Dental Adonay",
+    "Visão geral (quantidade de contatos e origens)",
+    "Campanhas e canais",
+    "Páginas e contatos",
+    "Qualidade dos dados",
+    "Edge Function dashboard-whatsapp",
+    "Supabase Auth e regras de acesso",
+    "rastreamento por UTM e Tag Manager",
+    "identidade visual (logo, azul e lilás)",
+    "filtros de período e modelo de atribuição",
+    "layout responsivo (computador e celular)",
+    "pacote de consistência SQL supabase/consistency-v1",
+    "métricas de clique válido, duplicidade e comparação entre períodos"
+  ],
+  "cross_refs": [
+    "supabase/consistency-v1",
+    "supabase/functions/dashboard-whatsapp/index.ts",
+    "supabase/consistency-v1/README"
+  ],
+  "locked": false,
+  "precedence": 2,
+  "notes": "Tipo declarado pelo manifesto (PRD, precedência 2); conteúdo confirma PRD — resultado desejado, proposta de escopo, hierarquia de indicadores e critérios de conclusão, sem contrato técnico de API. Ambiguidade resolvida: a seção 'Decisões confirmadas' contém decisões travadas pelo usuário (cliente único Adonay nesta etapa, reuso de UTM/Tag Manager e Supabase, acesso individual ao cliente, prioridade de quantidade de contatos e origens, identidade visual Adonay com protótipo aprovado, planejar antes de implementar, aperfeiçoar antes de expandir) e devem ser extraídas como decisões firmes apesar de locked=false (reservado a ADRs Accepted). Em contraste, 'Proposta de escopo da primeira versão' e 'Hierarquia proposta da visão geral' são explicitamente propostas sujeitas à revisão — NÃO tratar como travadas; apenas a prioridade de conteúdo da visão geral está confirmada, não a disposição. Também não travadas: 'Regras de interpretação a validar', 'Aguardando informação' e 'Expansões futuras (após validação)'. Idioma original: português do Brasil; interface do produto em espanhol como hipótese inicial."
+}
