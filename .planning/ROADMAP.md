@@ -39,7 +39,8 @@ Fases decimais aparecem entre as inteiras vizinhas, em ordem numérica.
 **Depends on**: Nada (primeira fase; nenhuma dependência de Supabase, por isso vem antes de tudo)
 **Requirements**: QUAL-01, QUAL-02, QUAL-03, QUAL-04, QUAL-05, QUAL-06
 **Success Criteria** (o que deve ser VERDADE):
-  1. `npm test` roda, em um comando, as quatro suítes que hoje só existem soltas em `tests/` — e falha quando alguma delas quebra.
+  1. `npm test` roda, em um comando, as suítes que hoje só existem soltas em `tests/` — `node --test tests/*.test.mjs` e `node tests/consistency-sql.mjs`, conforme QUAL-01 — e falha quando alguma delas quebra.
+     *Correção 2026-10-06:* este critério dizia "as quatro suítes", contando os quatro arquivos de `tests/`. A pesquisa da fase verificou que `tests/build-consistency-package.py` **não é suíte de teste**: é um gerador de código que exige como argumento o caminho de um CSV que não existe no repositório, não tem asserções próprias, e o Python não está instalado nesta máquina. Rodá-lo sem supervisão em CI quebraria por definição. Fica documentado como ferramenta manual, fora do `npm test` — que é exatamente o que QUAL-01 pede ao nomear apenas os dois comandos.
   2. O lint roda sobre `src/` e sobre `supabase/functions/` sem reescrever nenhuma das duas áreas no estilo da outra (frontend sem ponto-e-vírgula e aspas simples; Edge Function Deno com ponto-e-vírgula e aspas duplas).
   3. Um push ao repositório dispara CI que executa `tsc -b`, lint e os testes, e o resultado é visível.
   4. `README.md` e `CLAUDE.md` existem e respondem, sem leitura de código: como rodar, como testar, as convenções por área, e qual é o runbook do pacote de consistência — incluindo o aviso de que `baseline-functions.sql` não é migração.
