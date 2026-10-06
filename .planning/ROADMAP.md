@@ -50,7 +50,7 @@ Fases decimais aparecem entre as inteiras vizinhas, em ordem numérica.
 Plans:
 - [x] 01-01-PLAN.md — Scripts `test`/`lint`, todas as devDependencies e `eslint.config.js` de dois blocos (QUAL-01, QUAL-02, QUAL-03)
 - [x] 01-02-PLAN.md — Testes automatizados de `useDashboard.ts` e `AuthContext.tsx` (QUAL-06)
-- [ ] 01-03-PLAN.md — Pipeline de CI no GitHub Actions (QUAL-04)
+- [x] 01-03-PLAN.md — Pipeline de CI no GitHub Actions (QUAL-04)
 - [x] 01-04-PLAN.md — `README.md` e `CLAUDE.md` (QUAL-05)
 
 ### Phase 2: Aplicar o pacote consistency-v1

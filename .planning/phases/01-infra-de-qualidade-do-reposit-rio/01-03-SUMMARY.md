@@ -38,3 +38,23 @@ Nenhum push foi feito (a branch `gsd/onboarding` não tem upstream e o `gh` não
 ## Desvios
 
 Nenhum. Arquivos do usuário (`src/index.css`, `src/pages/Dashboard.tsx`) e `.claude/` não foram tocados.
+
+## Checkpoint resolvido — evidência da execução verde (2026-10-06)
+
+O checkpoint `human-verify` da Task 2 foi satisfeito com evidência verificada, não com aprovação verbal.
+
+- Branch `gsd/onboarding` publicado com autorização explícita do usuário. SHA: `f61b3aac07fa3a59cb0c1c9bbc840142b0747cf2`
+- Execução: https://github.com/Luizphdata/DAHSADONAY/actions/runs/37511878474
+- Resultado do job `verify`: **success**
+- Passos, todos verdes: `actions/checkout@v7`, `actions/setup-node@v7`, `npm ci`, `npm run build`, `npm run lint`, `npm test`
+
+O resultado foi lido pela API pública do GitHub (`/actions/runs/{id}/jobs`), que responde sem autenticação
+porque o repositório é público — o `gh` CLI não está instalado nesta máquina. Isso permitiu confirmar os
+passos individualmente em vez de confiar apenas na conclusão agregada do job.
+
+**Valor adicional desta evidência:** a suíte passou em `ubuntu-latest`, não apenas no Windows local.
+Isso exercita o caminho que mais preocupava neste setup — o `cross-env TSX_TSCONFIG_PATH=tsconfig.app.json`
+e o glob `tests/**/*.test.{mjs,ts,tsx}` são exatamente o tipo de construção que funciona num SO e quebra
+no outro. Agora está comprovado nos dois.
+
+QUAL-04 marcado completo. Plano 01-03 fechado.
