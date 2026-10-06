@@ -144,12 +144,12 @@ Cada requisito da v1 mapeia para **exatamente uma** fase.
 
 | Requisito | Fase | Status |
 |-----------|------|--------|
-| QUAL-01 | Fase 1 | Pendente |
-| QUAL-02 | Fase 1 | Pendente |
-| QUAL-03 | Fase 1 | Pendente |
-| QUAL-04 | Fase 1 | Pendente |
-| QUAL-05 | Fase 1 | Pendente |
-| QUAL-06 | Fase 1 | Pendente |
+| QUAL-01 | Fase 1 | Completo |
+| QUAL-02 | Fase 1 | Completo |
+| QUAL-03 | Fase 1 | Completo |
+| QUAL-04 | Fase 1 | Completo |
+| QUAL-05 | Fase 1 | Completo |
+| QUAL-06 | Fase 1 | Completo |
 | CONS-01 | Fase 2 | Pendente |
 | CONS-02 | Fase 2 | Pendente |
 | CONS-03 | Fase 2 | Pendente |

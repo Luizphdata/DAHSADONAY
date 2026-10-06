@@ -32,6 +32,18 @@ plano, ver `.planning/PROJECT.md`.
   dependência de idioma). Note também que `progress.total_phases` no frontmatter é regenerado
   incorretamente (9 em vez de 8) por esses handlers e precisa ser corrigido manualmente depois
   que eles rodam.
+- `gsd-sdk query phase.complete` **reporta `roadmap_updated: true` sem ter escrito** neste
+  projeto, e devolve `requirements_updated: false`. Verificado ao fechar a Fase 1: após rodá-lo,
+  o checkbox da fase continuava `- [ ]`, a linha da tabela de progresso continuava
+  `3/4 | In Progress`, e as seis linhas de rastreabilidade em `REQUIREMENTS.md` continuavam
+  `Pendente`. Ao fechar qualquer fase, **confira e corrija à mão** os quatro lugares:
+  1. `ROADMAP.md` — o checkbox `- [x] **Phase N:**` na lista de fases;
+  2. `ROADMAP.md` — a linha da fase na tabela `## Progress` (`N/N | Complete | data`);
+  3. `REQUIREMENTS.md` — a tabela de rastreabilidade no fim (`Pendente` → `Completo`);
+  4. `STATE.md` — corpo: posição, contagem de planos e "Última atividade"; frontmatter:
+     `completed_plans`.
+  Regra geral deste projeto: **trate o valor de retorno dos handlers `gsd-sdk` como alegação,
+  não como prova.** Confira o arquivo depois de chamá-los.
 
 ## 3. Como rodar/testar
 

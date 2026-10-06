@@ -22,7 +22,7 @@ A jornada, portanto, é: primeiro construir a rede de proteção que não depend
 
 Fases decimais aparecem entre as inteiras vizinhas, em ordem numérica.
 
-- [ ] **Phase 1: Infra de qualidade do repositório** - Rede de proteção sem dependência do Supabase: `npm test`, lint por área, CI, documentação e cobertura dos pontos stateful
+- [x] **Phase 1: Infra de qualidade do repositório** - Rede de proteção sem dependência do Supabase: `npm test`, lint por área, CI, documentação e cobertura dos pontos stateful *(concluída em 2026-10-06)*
 - [ ] **Phase 2: Aplicar o pacote consistency-v1** - Os achados #2, #5 e #6 saem do papel seguindo os 8 passos do README: cópia de teste primeiro, produção depois
 - [ ] **Phase 3: Descoberta — o que conta como contato** - Com acesso autenticado e números reais: definir o conjunto de eventos de contato, o comportamento pretendido da deduplicação e o impacto real dos achados abertos
 - [ ] **Phase 4: Atribuição consistente por touch** - Achado #1: cada touch resolve seu próprio conjunto de campos, fallback identificado, hostname extraído em vez de substring
@@ -167,7 +167,7 @@ As fases executam em ordem numérica: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Infra de qualidade do repositório | 3/4 | In Progress|  |
+| 1. Infra de qualidade do repositório | 4/4 | Complete | 2026-10-06 |
 | 2. Aplicar o pacote consistency-v1 | 0/TBD | Not started | - |
 | 3. Descoberta — o que conta como contato | 0/TBD | Not started | - |
 | 4. Atribuição consistente por touch | 0/TBD | Not started | - |
