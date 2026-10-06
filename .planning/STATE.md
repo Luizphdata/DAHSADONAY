@@ -26,7 +26,7 @@ Ver: `.planning/PROJECT.md` (atualizado em 2026-10-06)
 Fase: 1 de 8 (Infra de qualidade do repositório)
 Plano: 3 de 4 na fase atual
 Status: Executing Phase 01
-Última atividade: 2026-10-06 — plano 01-04 concluído (README.md e CLAUDE.md na raiz do repositório, QUAL-05). Plano 01-03 (CI) ainda pendente.
+Última atividade: 2026-10-06 — plano 01-03 (CI): workflow criado e commitado (36082a3); checkpoint de execução verde no GitHub PENDENTE (nenhum push feito).
 
 Progresso: [███████░░░] 75% (3/4 planos da Fase 1)
 
