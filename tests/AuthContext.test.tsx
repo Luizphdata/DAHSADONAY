@@ -24,9 +24,13 @@ function fakeClient(session: Session | null, authStateCalls: { count: number }) 
   }
 }
 
-test('when Supabase is not configured, loading resolves false immediately and no auth subscription is created', async (t) => {
-  const authStateCalls = { count: 0 }
-
+// Note on scope: with `supabase` mocked to null there is no client on which `onAuthStateChange`
+// could be called, so "no subscription is created" is structurally guaranteed rather than something
+// this test can observe. A counter asserted to be 0 here would be vacuous — it could never fail.
+// What this test does verify is the branch's observable output: loading settles, session and user
+// stay null, and configurationError is propagated to consumers (which is what drives
+// ConfigurationErrorScreen).
+test('when Supabase is not configured, loading resolves false immediately and the configuration error reaches consumers', async (t) => {
   t.mock.module(new URL('../src/lib/supabase.ts', import.meta.url).href, {
     exports: {
       supabase: null,
@@ -42,7 +46,6 @@ test('when Supabase is not configured, loading resolves false immediately and no
     assert.equal(result.current.session, null)
     assert.equal(result.current.user, null)
     assert.equal(result.current.configurationError, 'not configured')
-    assert.equal(authStateCalls.count, 0)
   } finally {
     unmount()
     cleanup()

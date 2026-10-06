@@ -1,5 +1,10 @@
 name: CI
 on: [push, pull_request]
+# Este workflow apenas le o codigo e roda build/lint/test: nao abre PR, nao comenta,
+# nao publica. Sem este bloco o GITHUB_TOKEN herdaria a permissao default do
+# repositorio, que e mais ampla do que o necessario.
+permissions:
+  contents: read
 jobs:
   verify:
     runs-on: ubuntu-latest
