@@ -1,7 +1,33 @@
 import fs from 'node:fs/promises'
 import assert from 'node:assert/strict'
 import { pathToFileURL } from 'node:url'
-const { PGlite } = await import(process.env.PGLITE_MODULE ? pathToFileURL(process.env.PGLITE_MODULE).href : '@electric-sql/pglite')
+// QUAL-02 exige que a ausência da dependência falhe com mensagem clara, não com o
+// ERR_MODULE_NOT_FOUND cru do Node. `@electric-sql/pglite` é dependência exclusiva de teste
+// (pinada em 0.3.14) e não está em `dependencies` de produção por decisão registrada em
+// supabase/consistency-v1/README.md, então faltar aqui é um cenário esperado, não excepcional.
+const pgliteSpecifier = process.env.PGLITE_MODULE
+  ? pathToFileURL(process.env.PGLITE_MODULE).href
+  : '@electric-sql/pglite'
+let PGlite
+try {
+  ({ PGlite } = await import(pgliteSpecifier))
+} catch (error) {
+  if (error?.code !== 'ERR_MODULE_NOT_FOUND') throw error
+  console.error(`
+FALHA: não foi possível carregar @electric-sql/pglite (de: ${pgliteSpecifier}).
+
+Este teste executa as funções PL/pgSQL reais contra um PostgreSQL em memória, então a
+dependência é obrigatória. Ela é de teste apenas — nunca a mova para "dependencies".
+
+Resolva com uma das opções:
+  1. npm install                       (instala as devDependencies, incluindo pglite 0.3.14)
+  2. PGLITE_MODULE=/caminho/absoluto/para/dist/index.js node tests/consistency-sql.mjs
+     (aponta para um build já existente, quando o pacote não é resolvível pelo npm daqui)
+
+Detalhe original: ${error.message}
+`)
+  process.exit(1)
+}
 const db = new PGlite()
 const dir = new URL('../supabase/consistency-v1/', import.meta.url)
 const baseline = await fs.readFile(new URL('baseline-functions.sql',dir),'utf8')
