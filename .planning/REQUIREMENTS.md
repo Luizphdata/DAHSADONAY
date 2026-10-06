@@ -20,7 +20,7 @@ Nenhuma dependência de Supabase. Vem primeiro e protege tudo depois.
 - [x] **QUAL-03**: Lint e formatação configurados com regras **por área**: `src/` sem ponto-e-vírgula, aspas simples, 2 espaços; `supabase/functions/` com ponto-e-vírgula e aspas duplas. Rodar o lint não reescreve nenhuma das duas áreas no estilo da outra. *(origem: `.planning/codebase/CONVENTIONS.md`; concern adicional do mapa do código)*
 - [ ] **QUAL-04**: CI executa `tsc -b`, lint e os testes a cada push, e falha visivelmente quando qualquer um quebra. *(origem: `.planning/codebase/CONCERNS.md` — "No automated CI pipeline")*
 - [ ] **QUAL-05**: `README.md` e `CLAUDE.md` existem e descrevem: como rodar, como testar, as convenções por área, e o runbook de aplicação do pacote de consistência com o aviso de que `baseline-functions.sql` não é migração. *(origem: `.planning/codebase/CONCERNS.md`; `supabase/consistency-v1/README.md`)*
-- [ ] **QUAL-06**: `src/hooks/useDashboard.ts` e `src/contexts/AuthContext.tsx` têm teste automatizado cobrindo restauração de sessão, troca de filtros, refresh em segundo plano e estado offline. *(origem: `.planning/codebase/CONCERNS.md` — "Test Coverage Gaps", prioridade alta)*
+- [x] **QUAL-06**: `src/hooks/useDashboard.ts` e `src/contexts/AuthContext.tsx` têm teste automatizado cobrindo restauração de sessão, troca de filtros, refresh em segundo plano e estado offline. *(origem: `.planning/codebase/CONCERNS.md` — "Test Coverage Gaps", prioridade alta)*
 
 ### CONS — Aplicação do pacote `consistency-v1`
 

@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-10-06T15:08:58.357Z"
+last_updated: "2026-10-06T16:04:11.359Z"
 progress:
   total_phases: 9
   completed_phases: 0
   total_plans: 4
-  completed_plans: 1
-  percent: 25
+  completed_plans: 2
+  percent: 50
 ---
 
 # Estado do projeto
@@ -24,29 +24,29 @@ Ver: `.planning/PROJECT.md` (atualizado em 2026-10-06)
 ## Posição atual
 
 Fase: 1 de 8 (Infra de qualidade do repositório)
-Plano: 1 de 4 na fase atual
+Plano: 2 de 4 na fase atual
 Status: Executing Phase 01
-Última atividade: 2026-10-06 — plano 01-01 concluído (scripts `test`/`lint`, devDependencies, `eslint.config.js`)
+Última atividade: 2026-10-06 — plano 01-02 concluído (testes automatizados `useDashboard.ts`/`AuthContext.tsx`, QUAL-06)
 
-Progresso: [██▓░░░░░░░] 25% (1/4 planos da Fase 1)
+Progresso: [█████░░░░░] 50% (2/4 planos da Fase 1)
 
 ## Métricas de desempenho
 
 **Velocidade:**
 
-- Planos concluídos: 1
-- Duração média: 15min
-- Tempo total de execução: 15min
+- Planos concluídos: 2
+- Duração média: ~35min
+- Tempo total de execução: ~70min
 
 **Por fase:**
 
 | Fase | Planos | Total | Média/plano |
 |------|--------|-------|-------------|
-| 1 | 1 | 15min | 15min |
+| 1 | 2 | ~70min | ~35min |
 
 **Tendência recente:**
 
-- Últimos 5 planos: 01-01 (15min)
+- Últimos 5 planos: 01-01 (15min), 01-02 (~55min)
 - Tendência: —
 
 *Atualizado após cada plano concluído*
@@ -62,6 +62,9 @@ O log completo está na tabela "Decisões-chave" de `.planning/PROJECT.md`. As s
 - **Ordem das frentes preservada:** F1 infra → F2 consistency-v1 → F3 achados abertos → F4 interface → F5 publicação. A F3 foi subdividida em quatro fases (3 a 6) porque `CON-ordem-correcao` impõe sub-passos ordenados.
 - **[Fase 01-01]** `eslint-plugin-react-hooks@7.1.1`'s bundled `recommended`/`recommended-latest` presets ship newer React-Compiler-oriented rules (set-state-in-effect, refs, purity etc.) that flag existing working code with no real bug; `eslint.config.js`'s `src/` block registers only `rules-of-hooks`/`exhaustive-deps` explicitly instead of spreading a preset, to avoid forcing application-logic rewrites out of this plan's scope.
 - **[Fase 01-01]** `react-refresh/only-export-components` got an `allowExportNames: ['useAuth']` override so the documented hook+provider co-location in `AuthContext.tsx` (CONVENTIONS.md § Module Design) doesn't fail lint.
+- **[Fase 01-02]** `node:test`'s `mock.module()` `exports` getters são avaliados **uma única vez**, no primeiro acesso ao módulo, e depois viram um valor fixo (congelado) — não são reavaliados a cada leitura (verificado empiricamente com um repro mínimo em `node:os`). Isso invalida a técnica literal do plano (mock único no topo do arquivo + getters trocando de cenário por teste) para `AuthContext.test.tsx`. Técnica corrigida: `t.mock.module()` por teste (restaurado automaticamente entre testes) + import do arquivo sob teste com um specifier "cache-busted" (`?case=...`) a cada teste, forçando uma instância de módulo nova cujo próprio import de `../lib/supabase` resolve contra o mock daquele teste.
+- **[Fase 01-02]** O script `npm test` herdado da Fase 01-01 quebrava em qualquer arquivo de teste `.tsx`: o `tsx/esm` loader resolve o `tsconfig.json` mais próximo subindo diretórios, e a raiz deste repo é um `tsconfig.json` "solution-style" (`files: []`, só `references`, sem `jsx`), então `AuthContext.tsx` usava o classic transform do JSX e quebrava com `ReferenceError: React is not defined`. Corrigido fixando `TSX_TSCONFIG_PATH=tsconfig.app.json` no script `test` (via `cross-env`, nova devDependency, para funcionar tanto no Windows local quanto no `ubuntu-latest` da CI).
+- **[Fase 01-02]** jsdom, por padrão, inicializa `document.visibilityState` como `'prerender'`/`hidden: true` a menos que `pretendToBeVisual: true` seja passado ao construtor — sem isso, o polling e a reconexão automática de `useDashboard.ts` nunca disparam nos testes (falha silenciosa, sem erro explícito). Ambos os novos arquivos de teste usam `pretendToBeVisual: true`.
 
 ### Pendências e todos
 
@@ -93,6 +96,6 @@ Nenhum todo capturado em `.planning/todos/pending/` ainda.
 ## Continuidade de sessão
 
 Última sessão: 2026-10-06
-Parou em: Execução do plano 01-01-PLAN.md (scripts `test`/`lint`, devDependencies, `eslint.config.js`) — QUAL-01, QUAL-02, QUAL-03 concluídos
+Parou em: Execução do plano 01-02-PLAN.md (testes automatizados `tests/useDashboard.test.ts` e `tests/AuthContext.test.tsx`) — QUAL-06 concluído. `npm test` com 14 testes (antes 9) + harness SQL, todos verdes; `npm run lint`/`npm run build` verificados verdes após a correção do script `test`.
 Arquivo de retomada: Nenhum
-Próxima ação: Executar `01-02-PLAN.md` (testes automatizados de `useDashboard.ts` e `AuthContext.tsx`, QUAL-06)
+Próxima ação: Executar `01-03-PLAN.md` (CI no GitHub Actions: `tsc -b`, lint, testes a cada push — QUAL-04)
