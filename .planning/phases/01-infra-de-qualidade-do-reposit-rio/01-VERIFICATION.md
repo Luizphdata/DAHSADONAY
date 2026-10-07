@@ -54,3 +54,13 @@ None required; CI evidence was supplied externally and accepted.
 None: QUAL-01..06 are all claimed by plans (01-01 claims 01-03; remaining by 01-02..01-04) and all map to Phase 1.
 
 _Verified: 2026-10-06 — Verifier: Claude (gsd-verifier)_
+
+## Addendum — post-close review (2026-10-07)
+
+The report above is kept as written; this section records what changed after it.
+
+- **QUAL-02 caveat resolved.** Commit `1a624b8` (after this report) wraps the pglite import in `tests/consistency-sql.mjs`: on `ERR_MODULE_NOT_FOUND` it prints a clear message (test-only dependency, `npm install` or `PGLITE_MODULE`) and exits 1, so `npm test` still fails. QUAL-02 is now VERIFIED without caveat.
+- **Bookkeeping findings resolved.** ROADMAP Phase 1 checkbox is `[x]`, progress table row is `4/4 | Complete | 2026-10-06`, and REQUIREMENTS traceability rows QUAL-01..06 read `Completo` (commit `b4507b6`). STATE.md body resynced on 2026-10-07.
+- **CI on the closing HEAD.** Run 37530626266 on `b4507b6` concluded `success`, covering the post-report commits `99f4947` and `1a624b8`; no longer relying only on the earlier runs.
+- **Re-run locally (Node 24.15.0):** `npm test` exit 0 (14 pass / 0 fail + `PASS SQL`), `npm run lint` exit 0, `npm run build` exit 0.
+- **Still open, unchanged:** QUAL-03 indentation not enforced by any rule; WR-03 and IN-02 remain accepted debt; `onAuthStateChange` callbacks not exercised.

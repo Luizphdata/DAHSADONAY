@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: ready_to_plan
-last_updated: "2026-10-06T16:04:11.359Z"
+last_updated: "2026-10-07T00:00:00.000Z"
 progress:
   total_phases: 8
   completed_phases: 1
@@ -19,34 +19,34 @@ progress:
 Ver: `.planning/PROJECT.md` (atualizado em 2026-10-06)
 
 **Valor central:** A Adonay entra e consulta resultados em que pode confiar — o indicador de maior destaque tem regra de contagem definida, validada contra os dados reais do Supabase e explicada na tela.
-**Foco atual:** Fase 1 — Infra de qualidade do repositório
+**Foco atual:** Fase 2 — Aplicar o pacote consistency-v1
 
 ## Posição atual
 
 Fase: 2 de 8 (Aplicar o pacote consistency-v1) — Fase 1 concluída
 Plano: 0 de TBD na Fase 2 (ainda não planejada)
 Status: Ready to plan
-Última atividade: 2026-10-06 — Fase 1 concluída: 4/4 planos, 6/6 requisitos. CI verde em ubuntu-latest (runs 37511878474 e 37529973052). Revisão de código resolvida: testes do useDashboard tornados falsificáveis, provado por mutação.
+Última atividade: 2026-10-06 — Fase 1 concluída: 4/4 planos, 6/6 requisitos. CI verde em ubuntu-latest (runs 37511878474, 37529973052 e 37530626266 — esta última no HEAD de fechamento `b4507b6`). Revisão de código resolvida: testes do useDashboard tornados falsificáveis, provado por mutação.
 
-Progresso: [███████░░░] 75% (3/4 planos da Fase 1)
+Progresso: [█░░░░░░░░░] 13% (1/8 fases; Fase 1: 4/4 planos)
 
 ## Métricas de desempenho
 
 **Velocidade:**
 
-- Planos concluídos: 3
-- Duração média: ~30min
-- Tempo total de execução: ~90min
+- Planos concluídos: 4
+- Duração média: ~30min (sobre os 3 planos com duração registrada)
+- Tempo total de execução: ~90min + 01-03 (sem duração registrada no SUMMARY)
 
 **Por fase:**
 
 | Fase | Planos | Total | Média/plano |
 |------|--------|-------|-------------|
-| 1 | 3 | ~90min | ~30min |
+| 1 | 4 | ~90min + 01-03 | ~30min |
 
 **Tendência recente:**
 
-- Últimos 5 planos: 01-01 (15min), 01-02 (~55min), 01-04 (~20min)
+- Últimos 5 planos: 01-01 (15min), 01-02 (~55min), 01-03 (não registrada), 01-04 (~20min)
 - Tendência: —
 
 *Atualizado após cada plano concluído*
@@ -96,7 +96,7 @@ Nenhum todo capturado em `.planning/todos/pending/` ainda.
 
 ## Continuidade de sessão
 
-Última sessão: 2026-10-06
-Parou em: Execução do plano 01-04-PLAN.md (README.md e CLAUDE.md na raiz do repositório) — QUAL-05 concluído. Ambos documentam como rodar/testar, convenções por área e o runbook do pacote `consistency-v1` com o aviso verbatim sobre `baseline-functions.sql`.
+Última sessão: 2026-10-07
+Parou em: Revisão pós-fechamento da Fase 1 — `npm test`, `npm run lint` e `npm run build` reexecutados com sucesso; CI verde no HEAD `b4507b6`; corpo deste arquivo e `01-VERIFICATION.md` ressincronizados.
 Arquivo de retomada: Nenhum
-Próxima ação: Executar `01-03-PLAN.md` (CI no GitHub Actions: `tsc -b`, lint, testes a cada push — QUAL-04)
+Próxima ação: Planejar a Fase 2 (`/gsd-discuss-phase 2` ou `/gsd-plan-phase 2`). Dívidas da Fase 1 que seguem abertas (não bloqueiam): WR-03 (`tests/` fora do lint e do `tsc -b`, candidato à Fase 7) e IN-02 (caminhos de erro do `AuthContext` sem teste).
